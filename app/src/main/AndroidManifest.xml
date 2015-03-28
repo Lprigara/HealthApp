@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.healthapp.leonor.healthapp" >
-
+    <uses-feature android:name="android.hardware.wifi" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -15,6 +15,30 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".InfoTemperatureActivity"
+            android:label="@string/title_activity_info_temperature" >
+        </activity>
+        <activity
+            android:name=".InfoPulseActivity"
+            android:label="@string/title_activity_info_pulse" >
+        </activity>
+        <activity
+            android:name=".InfoAirActivity"
+            android:label="@string/title_activity_info_air" >
+        </activity>
+        <activity
+            android:name=".InfoOxygenActivity"
+            android:label="@string/title_activity_info_oxygen" >
+        </activity>
+        <activity
+            android:name=".InfoConductanceActivity"
+            android:label="@string/title_activity_info_conductance" >
+        </activity>
+        <activity
+            android:name=".InfoResistanceActivity"
+            android:label="@string/title_activity_info_resistance" >
         </activity>
     </application>
 

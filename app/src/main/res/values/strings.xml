@@ -3,4 +3,11 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_info_temperature">InfoTemperatureActivity</string>
+    <string name="title_activity_info_pulse">InfoPulseActivity</string>
+    <string name="title_activity_info_air">InfoAirActivity</string>
+    <string name="title_activity_info_oxygen">InfoOxygenActivity</string>
+    <string name="title_activity_info_conductance">InfoConductanceActivity</string>
+    <string name="title_activity_info_resistance">InfoResistanceActivity</string>
+    <string name="temperatura">Temperatura</string>
 </resources>
