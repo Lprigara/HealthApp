@@ -1,151 +1,19 @@
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-android:paddingRight="@dimen/activity_horizontal_margin"
-android:paddingTop="@dimen/activity_vertical_margin"
-android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity">
 
-    <RelativeLayout android:layout_width="match_parent"
-     android:layout_height="wrap_content">
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Temperatura"
-            android:id="@+id/tempButton"
-            android:layout_marginTop="10dp"
-            android:layout_centerHorizontal="true"
-            android:gravity="left|center_vertical" />
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Flujo de aire"
-            android:id="@+id/airButton"
-            android:layout_marginTop="20dp"
-            android:layout_below="@+id/tempButton"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:gravity="left|center_vertical"/>
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Pulso"
-            android:id="@+id/pulseButton"
-            android:layout_marginTop="20dp"
-            android:layout_below="@+id/airButton"
-            android:layout_centerHorizontal="true"
-            android:gravity="left|center_vertical"/>
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Oxígeno en sangre"
-            android:id="@+id/oxygenButton"
-            android:layout_marginTop="20dp"
-            android:layout_below="@+id/pulseButton"
-            android:layout_centerHorizontal="true"
-            android:gravity="left|center_vertical"/>
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Conductividad"
-            android:id="@+id/conductanceButton"
-            android:layout_marginTop="20dp"
-            android:layout_below="@+id/oxygenButton"
-            android:layout_centerHorizontal="true"
-            android:gravity="left|center_vertical"/>
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Resistencia"
-            android:id="@+id/resistanceButton"
-            android:layout_marginTop="20dp"
-            android:layout_below="@+id/conductanceButton"
-            android:layout_centerHorizontal="true"
-            android:gravity="left|center_vertical"
-            android:layout_marginBottom="10dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:id="@+id/tempTextView"
-            android:layout_alignRight="@+id/tempButton"
-            android:layout_alignEnd="@+id/tempButton"
-            android:layout_marginRight="35dp"
-            android:layout_marginEnd="26dp"
-            android:layout_alignBottom="@+id/tempButton"
-            android:layout_alignTop="@+id/tempButton"
-            android:layout_marginTop="15dp"
-            android:layout_marginBottom="15dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/airTextView"
-            android:layout_alignBottom="@+id/airButton"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignTop="@+id/airButton"
-            android:layout_marginTop="15dp"
-            android:layout_marginRight="35dp"
-            android:layout_marginBottom="15dp"
-            android:layout_marginEnd="26dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/pulseTextView"
-            android:layout_alignTop="@+id/pulseButton"
-            android:layout_alignBottom="@+id/pulseButton"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="15dp"
-            android:layout_marginRight="35dp"
-            android:layout_marginBottom="15dp"
-            android:layout_marginEnd="26dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/oxygenTextView"
-            android:layout_alignTop="@+id/oxygenButton"
-            android:layout_alignBottom="@+id/oxygenButton"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="15dp"
-            android:layout_marginRight="35dp"
-            android:layout_marginBottom="15dp"
-            android:layout_marginEnd="26dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/conductanceTextView"
-            android:layout_alignTop="@+id/conductanceButton"
-            android:layout_alignBottom="@+id/conductanceButton"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="15dp"
-            android:layout_marginRight="35dp"
-            android:layout_marginBottom="15dp"
-            android:layout_marginEnd="26dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/resistanceTextView"
-            android:layout_alignTop="@+id/resistanceButton"
-            android:layout_alignBottom="@+id/resistanceButton"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="15dp"
-            android:layout_marginRight="35dp"
-            android:layout_marginBottom="15dp"
-            android:layout_marginEnd="26dp" />
-
-    </RelativeLayout>
-</ScrollView>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Controlar variables"
+        android:id="@+id/startButton"
+        android:layout_marginTop="143dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+</RelativeLayout>
