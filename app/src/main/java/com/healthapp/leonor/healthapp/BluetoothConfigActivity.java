@@ -14,11 +14,17 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 
@@ -29,14 +35,16 @@ public class BluetoothConfigActivity extends Activity implements View.OnClickLis
     private ArrayAdapter arrayAdapter;					// Adaptador para el listado de dispositivos
     private Button btnBuscarDispositivo;
     private ListView lvDispositivos;
+    private String nombreFichero = "dispositivoBluetooth.txt";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        conectarBluetooth();
+        activarBluetooth();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bluetooth_config);
         btnBuscarDispositivo = (Button)findViewById(R.id.buscarButton);
         btnBuscarDispositivo.setOnClickListener(this);
+
     }
 
     @Override
@@ -48,7 +56,7 @@ public class BluetoothConfigActivity extends Activity implements View.OnClickLis
         }
     }
 
-    private void conectarBluetooth(){
+    private void activarBluetooth(){
 
         // Obtenemos el adaptador Bluetooth. Si es NULL, el dispositivo no posee Bluetooth.
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -63,13 +71,8 @@ public class BluetoothConfigActivity extends Activity implements View.OnClickLis
             });
             dialog.show();
         }
-        if(bluetoothAdapter.isEnabled()){
-            bluetoothAdapter.disable();
+        if(!bluetoothAdapter.isEnabled()){
             peticionUsuarioActivacionBluetooth();
-        }
-        else{
-            peticionUsuarioActivacionBluetooth();
-
         }
         registrarEventosBluetooth();
 
@@ -96,6 +99,39 @@ public class BluetoothConfigActivity extends Activity implements View.OnClickLis
         }
         else {
             Toast.makeText(this, "No se pudo iniciar busqueda de dispositivos", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void configurarListaDispositivos()
+    {
+        lvDispositivos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView adapter, View view, int position, long arg)
+            {
+            // El ListView tiene un adaptador de tipo BluetoothDeviceArrayAdapter.
+            // Invocamos el metodo getItem() del adaptador para recibir el dispositivo
+            BluetoothDevice dispositivo = (BluetoothDevice)lvDispositivos.getAdapter().getItem(position);
+
+            guardarDispositivoEnFichero(dispositivo);
+            }
+        });
+    }
+
+    private void guardarDispositivoEnFichero(BluetoothDevice dispositivo)
+    {
+        try
+        {
+            OutputStreamWriter fileOut= new OutputStreamWriter(
+                    openFileOutput(nombreFichero , Context.MODE_PRIVATE));
+            fileOut.write(dispositivo.toString());
+
+            fileOut.flush();
+            fileOut.close();
+        }
+        catch (Exception ex)
+        {
+            Log.e("Ficheros", "Error al escribir fichero a memoria interna");
         }
     }
 
@@ -133,6 +169,8 @@ public class BluetoothConfigActivity extends Activity implements View.OnClickLis
                 lvDispositivos.setAdapter(arrayAdapter);
 
                 Toast.makeText(getBaseContext(), "Fin de la busqueda", Toast.LENGTH_SHORT).show();
+                
+                configurarListaDispositivos();
             }
         }
     };

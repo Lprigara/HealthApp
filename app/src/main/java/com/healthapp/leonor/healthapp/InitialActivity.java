@@ -10,15 +10,18 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 
 
 public class InitialActivity extends Activity {
@@ -26,13 +29,21 @@ public class InitialActivity extends Activity {
     private static final String TAG = "com.healthapp.leonor.healthapp.InitialActivity";
     private static final int    REQUEST_ENABLE_BT   = 1;
     private BluetoothAdapter bluetoothAdapter;
+    private TextView tvMensaje;
+    private TextView tvConexion;
+    private Button btnEnviar;
+    private BluetoothService 	servicio;				// Servicio de mensajes de Bluetooth
+    private BluetoothDevice ultimoDispositivo;		// Ultimo dispositivo conectado
+    private String nombreFichero = "dispositivoBluetooth.txt";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        conectarBluetooth();
+        activarBluetooth();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_initial);
 
+        leerDispositivoDeFichero();
         fillTextViews();
 
         tempBtnClick();
@@ -42,8 +53,27 @@ public class InitialActivity extends Activity {
         resistanceBtnClick();
     }
 
-    private void conectarBluetooth(){
+    private void leerDispositivoDeFichero()
+    {
+        try
+        {
+            BufferedReader fin =
+                    new BufferedReader(
+                            new InputStreamReader(
+                                    openFileInput(nombreFichero)));
 
+            String texto = fin.readLine();
+            Log.v("texto", texto);
+            fin.close();
+        }
+        catch (Exception ex)
+        {
+            Log.e("Ficheros", "Error al leer fichero desde memoria interna");
+        }
+    }
+
+    private void activarBluetooth()
+    {
         // Obtenemos el adaptador Bluetooth. Si es NULL, significara que el
         // dispositivo no posee Bluetooth, por lo que mostramos dialogo de alerta y salimos.
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -58,17 +88,13 @@ public class InitialActivity extends Activity {
             });
             dialog.show();
         }
-        if(bluetoothAdapter.isEnabled()){
-            bluetoothAdapter.disable();
+        if(!bluetoothAdapter.isEnabled()) {
             peticionUsuarioActivacionBluetooth();
-        }
-        else{
-            peticionUsuarioActivacionBluetooth();
-
         }
     }
 
-    private void peticionUsuarioActivacionBluetooth() {
+    private void peticionUsuarioActivacionBluetooth()
+    {
         // Lanzamos el Intent que mostrara la interfaz de activacion del
         // Bluetooth. La respuesta de este Intent se manejara en el metodo
         // onActivityResult
@@ -88,6 +114,7 @@ public class InitialActivity extends Activity {
         {
             case REQUEST_ENABLE_BT:
             {
+                Log.v(TAG, "onActivityResult: REQUEST_ENABLE_BT");
                 if(resultCode == RESULT_OK)
                 {
                     // Acciones adicionales a realizar si el usuario activa el Bluetooth
@@ -162,7 +189,7 @@ public class InitialActivity extends Activity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        this.unregisterReceiver(broadcastReceiver);
+//        this.unregisterReceiver(broadcastReceiver);
     }
 
     private void registrarEventosBluetooth()
