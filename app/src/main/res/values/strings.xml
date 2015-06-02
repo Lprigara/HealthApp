@@ -13,4 +13,6 @@
     <string name="title_activity_initial">InitialActivity</string>
     <string name="title_activity_main" />
     <string name="title_activity_menu">MenuActivity</string>
+    <string name="title_activity_bluetooth_config">BluetoothConfigActivity</string>
+    <string name="DetectadoDispositivo">Detectado Dispositivo</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.healthapp.leonor.healthapp;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -16,6 +17,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         startBtnClick();
+        bluetoothConfigurationClick();
     }
 
     private void startBtnClick() {
@@ -26,6 +28,19 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
 
                 Intent intent = new Intent(MainActivity.this, InitialActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void bluetoothConfigurationClick() {
+        Button btConfigBtn = (Button)findViewById(R.id.btConfigButton);
+
+        btConfigBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(MainActivity.this, BluetoothConfigActivity.class);
                 startActivity(intent);
             }
         });
