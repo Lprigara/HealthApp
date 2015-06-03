@@ -11,13 +11,16 @@ import android.widget.Button;
 
 public class MainActivity extends Activity {
 
+    private BluetoothAdapter bluetoothAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         startBtnClick();
-        bluetoothConfigurationClick();
+        bluetoothConfigurationBtnClick();
+        salirBtnClick();
     }
 
     private void startBtnClick() {
@@ -33,7 +36,24 @@ public class MainActivity extends Activity {
         });
     }
 
-    private void bluetoothConfigurationClick() {
+    private void salirBtnClick() {
+        Button salirBtn = (Button)findViewById(R.id.salirButton);
+
+        salirBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Obtenemos el adaptador Bluetooth. Si es NULL, el dispositivo no posee Bluetooth.
+                bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                if(bluetoothAdapter.isEnabled()){
+                    bluetoothAdapter.disable();
+                }
+                finish();
+                System.exit(0);
+            }
+        });
+    }
+
+    private void bluetoothConfigurationBtnClick() {
         Button btConfigBtn = (Button)findViewById(R.id.btConfigButton);
 
         btConfigBtn.setOnClickListener(new View.OnClickListener() {

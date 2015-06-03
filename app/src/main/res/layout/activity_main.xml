@@ -26,5 +26,14 @@
             android:layout_below="@+id/startButton"
             android:layout_centerHorizontal="true" />
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Salir"
+            android:id="@+id/salirButton"
+            android:layout_marginTop="20dp"
+            android:layout_below="@+id/btConfigButton"
+            android:layout_centerHorizontal="true" />
+
     </RelativeLayout>
 </ScrollView>
