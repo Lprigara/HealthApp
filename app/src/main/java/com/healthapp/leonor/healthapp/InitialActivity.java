@@ -36,7 +36,6 @@ public class InitialActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_initial);
 
-        leerDispositivoDeFichero();
         fillTextViews();
 
         tempBtnClick();
@@ -46,7 +45,7 @@ public class InitialActivity extends Activity {
         resistanceBtnClick();
     }
 
-    private void leerDispositivoDeFichero()
+    private String leerDispositivoDeFichero()
     {
         try
         {
@@ -58,11 +57,13 @@ public class InitialActivity extends Activity {
             String direccionDispositivoRemoto = fin.readLine();
             fin.close();
 
-            conectarDispositivo(direccionDispositivoRemoto);
+            return direccionDispositivoRemoto;
         }
         catch (Exception ex)
         {
             Log.e("Ficheros", "Error al leer fichero desde memoria interna");
+            finish();
+            return null;
         }
 
     }
@@ -104,6 +105,30 @@ public class InitialActivity extends Activity {
         {
             BluetoothDevice dispositivo = bluetoothAdapter.getRemoteDevice(direccion);
             servicio.solicitarConexion(dispositivo);
+        }
+    }
+
+    /**
+     * Handler del evento desencadenado al retornar de una actividad. En este caso, se utiliza
+     * para comprobar el valor de retorno al lanzar la actividad que activara el Bluetooth.
+     * En caso de que el usuario acepte, resultCode sera RESULT_OK
+     * En caso de que el usuario no acepte, resultCode valdra RESULT_CANCELED
+     */
+    @Override
+    protected void onActivityResult (int requestCode, int resultCode, Intent data) {
+        switch(requestCode)
+        {
+            case REQUEST_ENABLE_BT:
+            {
+                if(resultCode == RESULT_OK)
+                {
+                    String direccion = leerDispositivoDeFichero();
+                    conectarDispositivo(direccion);
+                }
+                break;
+            }
+            default:
+                break;
         }
     }
 
