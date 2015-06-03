@@ -10,8 +10,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,7 +19,6 @@ import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 
 
 public class InitialActivity extends Activity {
@@ -29,11 +26,7 @@ public class InitialActivity extends Activity {
     private static final String TAG = "com.healthapp.leonor.healthapp.InitialActivity";
     private static final int    REQUEST_ENABLE_BT   = 1;
     private BluetoothAdapter bluetoothAdapter;
-    private TextView tvMensaje;
-    private TextView tvConexion;
-    private Button btnEnviar;
-    private BluetoothService 	servicio;				// Servicio de mensajes de Bluetooth
-    private BluetoothDevice ultimoDispositivo;		// Ultimo dispositivo conectado
+    private BluetoothService servicio;
     private String nombreFichero = "dispositivoBluetooth.txt";
 
 
@@ -62,14 +55,16 @@ public class InitialActivity extends Activity {
                             new InputStreamReader(
                                     openFileInput(nombreFichero)));
 
-            String texto = fin.readLine();
-            Log.v("texto", texto);
+            String direccionDispositivoRemoto = fin.readLine();
             fin.close();
+
+            conectarDispositivo(direccionDispositivoRemoto);
         }
         catch (Exception ex)
         {
             Log.e("Ficheros", "Error al leer fichero desde memoria interna");
         }
+
     }
 
     private void activarBluetooth()
@@ -102,33 +97,13 @@ public class InitialActivity extends Activity {
         startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
     }
 
-    /**
-     * Handler del evento desencadenado al retornar de una actividad. En este caso, se utiliza
-     * para comprobar el valor de retorno al lanzar la actividad que activara el Bluetooth.
-     * En caso de que el usuario acepte, resultCode sera RESULT_OK
-     * En caso de que el usuario no acepte, resultCode valdra RESULT_CANCELED
-     */
-    @Override
-    protected void onActivityResult (int requestCode, int resultCode, Intent data) {
-        switch(requestCode)
+    public void conectarDispositivo(String direccion)
+    {
+        Toast.makeText(this, "Conectando a " + direccion, Toast.LENGTH_LONG).show();
+        if(servicio != null)
         {
-            case REQUEST_ENABLE_BT:
-            {
-                Log.v(TAG, "onActivityResult: REQUEST_ENABLE_BT");
-                if(resultCode == RESULT_OK)
-                {
-                    // Acciones adicionales a realizar si el usuario activa el Bluetooth
-                    Log.d(TAG, "oki");
-                }
-                else
-                {
-                    // Acciones adicionales a realizar si el usuario no activa el Bluetooth
-                }
-                break;
-            }
-
-            default:
-                break;
+            BluetoothDevice dispositivo = bluetoothAdapter.getRemoteDevice(direccion);
+            servicio.solicitarConexion(dispositivo);
         }
     }
 
