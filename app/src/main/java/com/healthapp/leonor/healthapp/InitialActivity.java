@@ -4,12 +4,15 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,7 +21,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.util.UUID;
 
 
 public class InitialActivity extends Activity {
@@ -28,6 +34,11 @@ public class InitialActivity extends Activity {
     private BluetoothAdapter bluetoothAdapter;
     private BluetoothService servicio;
     private String nombreFichero = "dispositivoBluetooth.txt";
+    private BluetoothDevice ultimoDispositivo;
+    private BluetoothSocket bluetoothSocket;
+    private static final UUID MY_UUID =
+            UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    private OutputStream outStream = null;
 
 
     @Override
@@ -45,7 +56,7 @@ public class InitialActivity extends Activity {
         resistanceBtnClick();
     }
 
-    private String leerDispositivoDeFichero()
+    public String leerDispositivoDeFichero()
     {
         try
         {
@@ -65,7 +76,6 @@ public class InitialActivity extends Activity {
             finish();
             return null;
         }
-
     }
 
     private void activarBluetooth()
@@ -84,9 +94,14 @@ public class InitialActivity extends Activity {
             });
             dialog.show();
         }
-        if(!bluetoothAdapter.isEnabled()) {
+        if(bluetoothAdapter.isEnabled()) {
+            String direccion = leerDispositivoDeFichero();
+            conectarDispositivo(direccion);
+        }
+        else {
             peticionUsuarioActivacionBluetooth();
         }
+
     }
 
     private void peticionUsuarioActivacionBluetooth()
@@ -100,11 +115,33 @@ public class InitialActivity extends Activity {
 
     public void conectarDispositivo(String direccion)
     {
-        Toast.makeText(this, "Conectando a " + direccion, Toast.LENGTH_LONG).show();
-        if(servicio != null)
-        {
-            BluetoothDevice dispositivo = bluetoothAdapter.getRemoteDevice(direccion);
-            servicio.solicitarConexion(dispositivo);
+        BluetoothDevice dispositivo = bluetoothAdapter.getRemoteDevice(direccion);
+        Toast.makeText(this, "Conectando a " + dispositivo.getName(), Toast.LENGTH_LONG).show();
+
+        try {
+            bluetoothSocket = dispositivo.createRfcommSocketToServiceRecord(MY_UUID);
+        } catch (IOException e) {
+            Log.e(TAG, "Error creando Socket: " , e);
+        }
+
+        Log.d(TAG, "Conectando dispositivos");
+
+        try {
+            bluetoothSocket.connect();
+            Toast.makeText(this, "Conectado", Toast.LENGTH_LONG).show();
+            Log.d(TAG, "Conexion establecida");
+        } catch (IOException e) {
+            try {
+                bluetoothSocket.close();
+            } catch (IOException e2) {
+                Log.e(TAG, "Error cerrando socket", e2);
+            }
+        }
+
+        try {
+            outStream = bluetoothSocket.getOutputStream();
+        } catch (IOException e) {
+            Log.e(TAG, "Error creando stream de salida:" , e);
         }
     }
 
@@ -139,36 +176,36 @@ public class InitialActivity extends Activity {
         @Override
         public void onReceive(Context context, Intent intent)
         {
-            final String action = intent.getAction();
+        final String action = intent.getAction();
 
-            // Codigo que se ejecutara cuando el Bluetooth cambie su estado.
-            // Manejaremos los siguientes estados:
-            //		- STATE_OFF: El Bluetooth se desactiva
-            //		- STATE ON: El Bluetooth se activa
-            if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action))
+        // Codigo que se ejecutara cuando el Bluetooth cambie su estado.
+        // Manejaremos los siguientes estados:
+        //		- STATE_OFF: El Bluetooth se desactiva
+        //		- STATE ON: El Bluetooth se activa
+        if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action))
+        {
+            // Solicitamos la informacion extra del intent etiquetada como BluetoothAdapter.EXTRA_STATE
+            // El segundo parametro indicara el valor por defecto que se obtendra si el dato extra no existe
+            final int estado = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
+            switch(estado)
             {
-                // Solicitamos la informacion extra del intent etiquetada como BluetoothAdapter.EXTRA_STATE
-                // El segundo parametro indicara el valor por defecto que se obtendra si el dato extra no existe
-                final int estado = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
-                switch(estado)
-                {
-                    case BluetoothAdapter.STATE_OFF: {
-                        bluetoothDesconectado();
-                        break;
-                    }
-                    case BluetoothAdapter.STATE_ON: {
-                        Log.d(TAG, "onReceive: Encendiendo");
-                        // Lanzamos un Intent de solicitud de visibilidad Bluetooth, al que anadimos un par
-                        // clave-valor que indicara la duracion de este estado, en este caso 120 segundos
-                        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-                        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 120);
-                        startActivity(discoverableIntent);
-                        break;
-                    }
-                    default:
-                        break;
+                case BluetoothAdapter.STATE_OFF: {
+                    bluetoothDesconectado();
+                    break;
                 }
+                case BluetoothAdapter.STATE_ON: {
+                    Log.d(TAG, "onReceive: Encendiendo");
+                    // Lanzamos un Intent de solicitud de visibilidad Bluetooth, al que anadimos un par
+                    // clave-valor que indicara la duracion de este estado, en este caso 120 segundos
+                    Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+                    discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 120);
+                    startActivity(discoverableIntent);
+                    break;
+                }
+                default:
+                    break;
             }
+        }
         }
     };
 
@@ -190,6 +227,16 @@ public class InitialActivity extends Activity {
     public void onDestroy() {
         super.onDestroy();
 //        this.unregisterReceiver(broadcastReceiver);
+    }
+
+    @Override
+    public synchronized void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public synchronized void onPause() {
+        super.onPause();
     }
 
     private void registrarEventosBluetooth()
