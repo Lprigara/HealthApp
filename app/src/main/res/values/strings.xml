@@ -15,4 +15,9 @@
     <string name="title_activity_menu">MenuActivity</string>
     <string name="title_activity_bluetooth_config">BluetoothConfigActivity</string>
     <string name="DetectadoDispositivo">Detectado Dispositivo</string>
+    <string name="ConexionActual">Conexión actual:</string>
+    <string name="ConectandoA">Conectando a</string>
+    <string name="SinConexion">Conexión actual: SIN CONEXIÓN</string>
+
+
 </resources>

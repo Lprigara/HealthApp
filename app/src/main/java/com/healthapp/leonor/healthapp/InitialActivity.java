@@ -34,7 +34,7 @@ public class InitialActivity extends Activity {
     private BluetoothAdapter bluetoothAdapter;
     private BluetoothService servicio;
     private String nombreFichero = "dispositivoBluetooth.txt";
-    private BluetoothDevice ultimoDispositivo;
+    private BluetoothDevice dispositivo;
     private BluetoothSocket bluetoothSocket;
     private static final UUID MY_UUID =
             UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -95,6 +95,15 @@ public class InitialActivity extends Activity {
             dialog.show();
         }
         if(bluetoothAdapter.isEnabled()) {
+            if(servicio != null)
+            {
+                servicio.finalizarServicio();
+                servicio.iniciarServicio();
+            }
+            else {
+                servicio = new BluetoothService(this, handler, bluetoothAdapter);
+            }
+
             String direccion = leerDispositivoDeFichero();
             conectarDispositivo(direccion);
         }
@@ -118,30 +127,11 @@ public class InitialActivity extends Activity {
         BluetoothDevice dispositivo = bluetoothAdapter.getRemoteDevice(direccion);
         Toast.makeText(this, "Conectando a " + dispositivo.getName(), Toast.LENGTH_LONG).show();
 
-        try {
-            bluetoothSocket = dispositivo.createRfcommSocketToServiceRecord(MY_UUID);
-        } catch (IOException e) {
-            Log.e(TAG, "Error creando Socket: " , e);
-        }
-
-        Log.d(TAG, "Conectando dispositivos");
-
-        try {
-            bluetoothSocket.connect();
-            Toast.makeText(this, "Conectado", Toast.LENGTH_LONG).show();
-            Log.d(TAG, "Conexion establecida");
-        } catch (IOException e) {
-            try {
-                bluetoothSocket.close();
-            } catch (IOException e2) {
-                Log.e(TAG, "Error cerrando socket", e2);
-            }
-        }
-
-        try {
-            outStream = bluetoothSocket.getOutputStream();
-        } catch (IOException e) {
-            Log.e(TAG, "Error creando stream de salida:" , e);
+        if(servicio != null)
+        {
+            BluetoothDevice dispositivoRemoto = bluetoothAdapter.getRemoteDevice(direccion);
+            servicio.solicitarConexion(dispositivoRemoto);
+            this.dispositivo = dispositivoRemoto;
         }
     }
 
@@ -159,6 +149,15 @@ public class InitialActivity extends Activity {
             {
                 if(resultCode == RESULT_OK)
                 {
+                    if(servicio != null)
+                    {
+                        servicio.finalizarServicio();
+                        servicio.iniciarServicio();
+                    }
+                    else {
+                        servicio = new BluetoothService(this, handler, bluetoothAdapter);
+                    }
+
                     String direccion = leerDispositivoDeFichero();
                     conectarDispositivo(direccion);
                 }
@@ -221,17 +220,90 @@ public class InitialActivity extends Activity {
         dialog.show();
     }
 
+    // Handler que obtendr? informacion de BluetoothService
+    private final Handler handler = new Handler() {
+
+        @Override
+        public void handleMessage(Message msg)
+        {
+            byte[] buffer 	= null;
+            String mensaje 	= null;
+
+            // Atendemos al tipo de mensaje
+            switch(msg.what)
+            {
+                // Mensaje de lectura: se mostrara en el TextView
+                case BluetoothService.MSG_LEER:
+                {
+                    buffer = (byte[])msg.obj;
+                    mensaje = new String(buffer, 0, msg.arg1);
+                    Log.d(TAG, mensaje);
+                    break;
+                }
+
+                // Mensaje de cambio de estado
+                case BluetoothService.MSG_CAMBIO_ESTADO:
+                {
+                    switch(msg.arg1)
+                    {
+                        case BluetoothService.ESTADO_ATENDIENDO_PETICIONES:
+                            break;
+
+                        // CONECTADO: Se muestra el dispositivo al que se ha conectado
+                        case BluetoothService.ESTADO_CONECTADO:
+                        {
+                            mensaje = getString(R.string.ConexionActual) + " " + servicio.getNombreDispositivo();
+                            Toast.makeText(getApplicationContext(), mensaje, Toast.LENGTH_SHORT).show();
+                            break;
+                        }
+
+                        // REALIZANDO CONEXION: Se muestra el dispositivo al que se esta conectando
+                        case BluetoothService.ESTADO_REALIZANDO_CONEXION:
+                        {
+                            mensaje = getString(R.string.ConectandoA) + " " + dispositivo.getName() + " [" + dispositivo.getAddress() + "]";
+                            Toast.makeText(getApplicationContext(), mensaje, Toast.LENGTH_SHORT).show();
+                            break;
+                        }
+
+                        // NINGUNO: Mensaje por defecto.
+                        case BluetoothService.ESTADO_NINGUNO:
+                        {
+                            mensaje = getString(R.string.SinConexion);
+                            Toast.makeText(getApplicationContext(), mensaje, Toast.LENGTH_SHORT).show();
+                            break;
+                        }
+                        default:
+                            break;
+                    }
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+    };
+
+
     // Ademas de realizar la destruccion de la actividad, eliminamos el registro del
     // BroadcastReceiver.
     @Override
     public void onDestroy() {
         super.onDestroy();
 //        this.unregisterReceiver(broadcastReceiver);
+        if(servicio != null)
+            servicio.finalizarServicio();
     }
 
     @Override
     public synchronized void onResume() {
         super.onResume();
+        if(servicio != null)
+        {
+            if(servicio.getEstadoConexion() == BluetoothService.ESTADO_NINGUNO)
+            {
+                servicio.iniciarServicio();
+            }
+        }
     }
 
     @Override
