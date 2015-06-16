@@ -1,7 +1,9 @@
 #include <PinChangeInt.h>
-#include <QueueList.h>
+#include <Event.h>
+#include <Timer.h>
 #include <eHealth.h>
 
+Timer timer; 
 int cont =0;
 char delimitador = '+';
 char finPaquete = '~';
@@ -10,11 +12,12 @@ void setup()
    { 
      Serial.begin(9600);
      eHealth.initPulsioximeter();
+     timer.every(7000, enviarVariables)
      PCintPort::attachInterrupt(6, readPulsioximeter, RISING);
    }
 
 void loop(){  
-     enviarVariables();          
+     timer.update();         
 }
    
 void enviarVariables()
