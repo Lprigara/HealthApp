@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -21,9 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.util.UUID;
 
 
@@ -35,10 +34,8 @@ public class InitialActivity extends Activity {
     private BluetoothService servicio;
     private String nombreFichero = "dispositivoBluetooth.txt";
     private BluetoothDevice dispositivo;
-    private BluetoothSocket bluetoothSocket;
-    private static final UUID MY_UUID =
-            UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-    private OutputStream outStream = null;
+    private Paquete paquete;
+    private StringBuilder recogidaDatosString = new StringBuilder();
 
 
     @Override
@@ -46,8 +43,6 @@ public class InitialActivity extends Activity {
         activarBluetooth();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_initial);
-
-        fillTextViews();
 
         tempBtnClick();
         pulseBtnClick();
@@ -220,6 +215,25 @@ public class InitialActivity extends Activity {
         dialog.show();
     }
 
+    public void leerVariables(Message msg){
+        Log.v(TAG, "Leyendo mensaje");
+        String mensaje = (String) msg.obj;
+        recogidaDatosString.append(mensaje);
+        int caracterFinal = recogidaDatosString.indexOf("~");
+        if (caracterFinal > 0) {
+            String dataInPrint = recogidaDatosString.substring(0, caracterFinal);
+            Log.v("Data Received = ", dataInPrint);
+
+            String[] arrayVariables = dataInPrint.split("\\+");
+
+            if(arrayVariables[0].equals("#")){
+                paquete = new Paquete(arrayVariables);
+                rellenarTextViews(paquete);
+            }
+            recogidaDatosString.delete(0, recogidaDatosString.length());
+            dataInPrint = " ";
+        }
+    }
     // Handler que obtendr? informacion de BluetoothService
     private final Handler handler = new Handler() {
 
@@ -235,9 +249,7 @@ public class InitialActivity extends Activity {
                 // Mensaje de lectura: se mostrara en el TextView
                 case BluetoothService.MSG_LEER:
                 {
-                    buffer = (byte[])msg.obj;
-                    mensaje = new String(buffer, 0, msg.arg1);
-                    Log.d(TAG, mensaje);
+                    leerVariables(msg);
                     break;
                 }
 
@@ -283,7 +295,13 @@ public class InitialActivity extends Activity {
         }
     };
 
-
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == event.KEYCODE_BACK) {
+            servicio.finalizarServicio();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
     // Ademas de realizar la destruccion de la actividad, eliminamos el registro del
     // BroadcastReceiver.
     @Override
@@ -319,17 +337,17 @@ public class InitialActivity extends Activity {
         this.registerReceiver(broadcastReceiver, filtro);
     }
 
-    public void fillTextViews(){
+    public void rellenarTextViews(Paquete paquete){
         TextView tempTextView = (TextView) findViewById(R.id.tempTextView);
-        tempTextView.setText("Temp");
+        tempTextView.setText(paquete.getTemperatura());
         TextView pulseTextView = (TextView) findViewById(R.id.pulseTextView);
-        pulseTextView.setText("Pulse");
+        pulseTextView.setText(paquete.getPulso());
         TextView oxygenTextView = (TextView) findViewById(R.id.oxygenTextView);
-        oxygenTextView.setText("Oxygen");
+        oxygenTextView.setText(paquete.getOxygeno());
         TextView conductanceTextView = (TextView) findViewById(R.id.conductanceTextView);
-        conductanceTextView.setText("Conduct");
+        conductanceTextView.setText(paquete.getConductancia());
         TextView resistanceTextView = (TextView) findViewById(R.id.resistanceTextView);
-        resistanceTextView.setText("Resist");
+        resistanceTextView.setText(paquete.getResistencia());
     }
 
     private void tempBtnClick() {
