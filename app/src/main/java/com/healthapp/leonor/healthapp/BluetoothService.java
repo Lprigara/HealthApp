@@ -196,7 +196,7 @@ public class BluetoothService {
             while (estadoConexion != ESTADO_CONECTADO)
             {
                 try {
-                    // Cuando un cliente solicite la conexion se abrirá el socket.
+                    // Cuando un cliente solicite la conexion se abrira el socket.
                     socket = serverSocket.accept();
                 } catch (IOException e) {
                     Log.e("s", "HiloServidor.run(): Error al aceptar conexiones entrantes", e);
@@ -348,6 +348,27 @@ public class BluetoothService {
             byte[] buffer = new byte[1024];
             int bytes;
             setEstadoConexion(ESTADO_CONECTADO);
+
+            // Mientras se mantenga la conexion el hilo se mantiene en espera ocupada
+            // leyendo del flujo de entrada
+            while(true)
+            {
+                try {
+                    // Leemos del flujo de entrada del socket
+                    bytes = inputStream.read(buffer);
+                    String mensaje = new String(buffer, 0, bytes);
+                    // Enviamos la informacion a la actividad a traves del handler.
+                    // El metodo handleMessage sera el encargado de recibir el mensaje
+                    // y mostrar los datos recibidos en el TextView
+                    handler.obtainMessage(MSG_LEER, bytes, -1, mensaje).sendToTarget();
+                    sleep(500);
+                }
+                catch(IOException e) {
+                    Log.e(TAG, "HiloConexion.run(): Error al realizar la lectura", e);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         public void cancelarConexion()
@@ -355,6 +376,7 @@ public class BluetoothService {
             Log.v("HiloConexion.cancelarConexion()", "Iniciando metodo");
             try {
                 // Forzamos el cierre del socket
+                inputStream.close();
                 socket.close();
 
                 // Cambiamos el estado del servicio
