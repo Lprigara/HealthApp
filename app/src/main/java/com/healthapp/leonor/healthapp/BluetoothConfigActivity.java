@@ -18,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -34,16 +35,21 @@ public class BluetoothConfigActivity extends Activity implements View.OnClickLis
     private ArrayList<BluetoothDevice> listaDispositivos;
     private ArrayAdapter arrayAdapter;					// Adaptador para el listado de dispositivos
     private Button btnBuscarDispositivo;
+    private TextView dispositivoPorDefectoTextView;
     private ListView lvDispositivos;
     private String nombreFichero = "dispositivoBluetooth.txt";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        activarBluetooth();
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bluetooth_config);
+        dispositivoPorDefectoTextView = (TextView)findViewById(R.id.defaultTextView);
+        activarBluetooth();
+        leerDispositivoDeFichero();
+        super.onCreate(savedInstanceState);
+
         btnBuscarDispositivo = (Button)findViewById(R.id.buscarButton);
         btnBuscarDispositivo.setOnClickListener(this);
+
 
     }
 
@@ -116,6 +122,30 @@ public class BluetoothConfigActivity extends Activity implements View.OnClickLis
             guardarDispositivoEnFichero(dispositivo);
             }
         });
+    }
+
+    private void leerDispositivoDeFichero()
+    {
+        String direccionDispositivo = "";
+
+        try
+        {
+            BufferedReader fin =
+                    new BufferedReader(
+                            new InputStreamReader(
+                                    openFileInput(nombreFichero)));
+
+            direccionDispositivo = fin.readLine();
+            fin.close();
+
+        }
+        catch (Exception ex)
+        {
+            Toast.makeText(getBaseContext(), getString(R.string.NoExisteFichero), Toast.LENGTH_SHORT).show();
+            Log.e("Ficheros", "Error al leer fichero desde memoria interna");
+        }
+        BluetoothDevice dispositivoPorDefecto = bluetoothAdapter.getRemoteDevice(direccionDispositivo);
+        dispositivoPorDefectoTextView.setText(dispositivoPorDefecto.getName());
     }
 
     private void guardarDispositivoEnFichero(BluetoothDevice dispositivo)

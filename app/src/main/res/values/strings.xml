@@ -18,6 +18,6 @@
     <string name="ConexionActual">Conexión actual:</string>
     <string name="ConectandoA">Conectando a</string>
     <string name="SinConexion">Conexión actual: SIN CONEXIÓN</string>
-
+    <string name="NoExisteFichero">No existe fichero en el dispositivo</string>
 
 </resources>
