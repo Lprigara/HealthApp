@@ -1,39 +1,67 @@
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="fill_parent"
+    android:layout_height="fill_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
+    android:background="#8FB1CD"
     tools:context=".MainActivity">
 
-    <RelativeLayout  android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+    <RelativeLayout android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+
+
+        <ImageButton
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:text="Controlar variables"
             android:id="@+id/startButton"
-            android:layout_marginTop="20dp"
-            android:layout_centerHorizontal="true" />
+            android:src="@drawable/monitorizar"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/btConfigButton"
+            android:layout_marginTop="76dp" />
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+
+        <ImageButton
+            android:layout_width="130dp"
+            android:layout_height="150dp"
             android:text="Configurar Bluetooth"
             android:id="@+id/btConfigButton"
-            android:layout_marginTop="20dp"
-            android:layout_below="@+id/startButton"
-            android:layout_centerHorizontal="true" />
+            android:src="@drawable/configurarbt"
+            android:layout_marginRight="45dp"
+            android:layout_marginEnd="45dp"
+            android:layout_above="@+id/salirButton"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
 
         <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="200dp"
+            android:layout_height="60dp"
             android:text="Salir"
+            android:textSize="20dp"
+            android:textStyle="bold"
             android:id="@+id/salirButton"
-            android:layout_marginTop="20dp"
-            android:layout_below="@+id/btConfigButton"
-            android:layout_centerHorizontal="true" />
+            android:background="@drawable/roundcorners"
+            android:layout_marginTop="35dp"
+            android:layout_below="@+id/startButton"
+            android:layout_alignRight="@+id/btConfigButton"
+            android:layout_alignEnd="@+id/btConfigButton"
+            android:layout_alignLeft="@+id/startButton"
+            android:layout_alignStart="@+id/startButton" />
+
+        <TextView
+            android:layout_marginTop="400dp"
+            android:layout_width="190dp"
+            android:layout_height="170dp"
+            android:text="@string/InformacionApp"
+            android:textSize="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:id="@+id/InformacionApp"
+            android:textAlignment="center" />
 
     </RelativeLayout>
 </ScrollView>

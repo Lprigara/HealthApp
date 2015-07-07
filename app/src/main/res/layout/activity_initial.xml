@@ -4,6 +4,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
+    android:background="#8FB1CD"
     tools:context="com.healthapp.leonor.healthapp.InitialActivity">
 
     <RelativeLayout android:layout_width="match_parent"
@@ -14,17 +15,21 @@
             android:text="Temperatura"
             android:id="@+id/tempButton"
             android:layout_marginTop="10dp"
+            android:drawableLeft="@drawable/temperaturaa"
+            android:background="@drawable/roundcorners"
             android:layout_centerHorizontal="true"
             android:gravity="left|center_vertical" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Pulso"
+            android:text="  Pulso"
             android:id="@+id/pulseButton"
             android:layout_marginTop="20dp"
             android:layout_below="@+id/tempButton"
+            android:drawableLeft="@drawable/pulso"
             android:layout_centerHorizontal="true"
+            android:background="@drawable/roundcorners"
             android:gravity="left|center_vertical"/>
 
         <Button
@@ -35,6 +40,8 @@
             android:layout_marginTop="20dp"
             android:layout_below="@+id/pulseButton"
             android:layout_centerHorizontal="true"
+            android:background="@drawable/roundcorners"
+            android:drawableLeft="@drawable/oxigeno"
             android:gravity="left|center_vertical"/>
 
         <Button
@@ -45,17 +52,21 @@
             android:layout_marginTop="20dp"
             android:layout_below="@+id/oxygenButton"
             android:layout_centerHorizontal="true"
+            android:drawableLeft="@drawable/sudor"
+            android:background="@drawable/roundcorners"
             android:gravity="left|center_vertical"/>
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Resistencia"
+            android:text="  Resistencia"
             android:id="@+id/resistanceButton"
             android:layout_marginTop="20dp"
             android:layout_below="@+id/conductanceButton"
             android:layout_centerHorizontal="true"
             android:gravity="left|center_vertical"
+            android:drawableLeft="@drawable/piel"
+            android:background="@drawable/roundcorners"
             android:layout_marginBottom="10dp" />
 
         <TextView
@@ -68,6 +79,7 @@
             android:layout_marginEnd="26dp"
             android:layout_alignBottom="@+id/tempButton"
             android:layout_alignTop="@+id/tempButton"
+            android:textSize="15dp"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="15dp" />
 
@@ -80,6 +92,7 @@
             android:layout_alignBottom="@+id/pulseButton"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
+            android:textSize="15dp"
             android:layout_marginTop="15dp"
             android:layout_marginRight="35dp"
             android:layout_marginBottom="15dp"
@@ -93,6 +106,7 @@
             android:layout_alignBottom="@+id/oxygenButton"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
+            android:textSize="15dp"
             android:layout_marginTop="15dp"
             android:layout_marginRight="35dp"
             android:layout_marginBottom="15dp"
@@ -106,6 +120,7 @@
             android:layout_alignBottom="@+id/conductanceButton"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
+            android:textSize="15dp"
             android:layout_marginTop="15dp"
             android:layout_marginRight="35dp"
             android:layout_marginBottom="15dp"
@@ -119,6 +134,7 @@
             android:layout_alignBottom="@+id/resistanceButton"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
+            android:textSize="15dp"
             android:layout_marginTop="15dp"
             android:layout_marginRight="35dp"
             android:layout_marginBottom="15dp"

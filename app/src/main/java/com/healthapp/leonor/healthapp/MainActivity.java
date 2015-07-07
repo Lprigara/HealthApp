@@ -3,12 +3,14 @@ package com.healthapp.leonor.healthapp;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 public class MainActivity extends Activity {
 
@@ -25,7 +27,7 @@ public class MainActivity extends Activity {
     }
 
     private void startBtnClick() {
-        Button startBtn = (Button)findViewById(R.id.startButton);
+        ImageButton startBtn = (ImageButton)findViewById(R.id.startButton);
 
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,7 +69,7 @@ public class MainActivity extends Activity {
     }
 
     private void bluetoothConfigurationBtnClick() {
-        Button btConfigBtn = (Button)findViewById(R.id.btConfigButton);
+        ImageButton btConfigBtn = (ImageButton)findViewById(R.id.btConfigButton);
 
         btConfigBtn.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -19,5 +19,6 @@
     <string name="ConectandoA">Conectando a</string>
     <string name="SinConexion">Conexión actual: SIN CONEXIÓN</string>
     <string name="NoExisteFichero">No existe fichero en el dispositivo</string>
+    <string name="InformacionApp">"Aplicación realizada por: \n     Leonor Priego García \n\npara el proyecto de fin de grado: \nMonitorización de variables mediante plataforma de bajo coste"</string>
 
 </resources>
